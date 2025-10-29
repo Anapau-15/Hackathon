@@ -1,0 +1,855 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SustenCoins - Turismo Sostenible con Blockchain</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@4.0.3/dist/web3.min.js"></script>
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --primary-light: #4CAF50;
+            --secondary: #FFC107;
+            --accent: #2196F3;
+            --dark: #1B5E20;
+            --light: #E8F5E8;
+            --white: #FFFFFF;
+            --gray: #f5f5f5;
+            --text: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: var(--white);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
+        .wallet-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+            color: var(--dark);
+        }
+
+        .btn-primary:hover {
+            background-color: #FFB300;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .wallet-info {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 5rem 0;
+            background: linear-gradient(rgba(46, 125, 50, 0.9), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Experiences Section */
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary);
+            font-size: 2.2rem;
+        }
+
+        .experiences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .experience-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .experience-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-content h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .impact-badge {
+            background: var(--primary-light);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .card-actions button {
+            flex: 1;
+            padding: 10px;
+        }
+
+        /* Impact Section */
+        .impact-section {
+            background: var(--gray);
+        }
+
+        .impact-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .stat-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        /* NFT Section */
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .nft-card {
+            background: var(--white);
+            border: 2px solid var(--secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .nft-card h3 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .btn-nft {
+            background: var(--secondary);
+            color: var(--dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .wallet-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🌿</span>
+                <span>SustenCoins</span>
+            </div>
+
+            <nav>
+                <ul>
+                    <li><a href="#experiences">Experiencias</a></li>
+                    <li><a href="#impact">Tu Impacto</a></li>
+                    <li><a href="#nfts">NFTs</a></li>
+                    <li><a href="#about">Acerca de</a></li>
+                </ul>
+            </nav>
+
+            <div class="wallet-section">
+                <div class="wallet-info" id="walletInfo">
+                    No conectado
+                </div>
+                <button class="btn btn-primary" id="connectWallet">Conectar Wallet</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <h1>Turismo Sostenible con Blockchain</h1>
+        <p>Gana tokens ecológicos por participar en experiencias turísticas responsables y ayuda a construir economías locales sostenibles.</p>
+        <button class="btn btn-secondary" id="exploreBtn">Explorar Experiencias</button>
+    </div>
+</section>
+
+<!-- Experiences Section -->
+<section class="section" id="experiences">
+    <div class="container">
+        <h2 class="section-title">🌎 Experiencias Sostenibles Verificadas</h2>
+
+        <div class="experiences-grid" id="experiencesGrid">
+            <!-- Las experiencias se cargarán dinámicamente con JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Impact Section -->
+<section class="section impact-section" id="impact">
+    <div class="container">
+        <h2 class="section-title">📊 Tu Impacto Ambiental</h2>
+
+        <div class="impact-stats">
+            <div class="stat-card">
+                <h3>Total SUSC Ganados</h3>
+                <div class="stat-value" id="totalSUSC">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Experiencias Completadas</h3>
+                <div class="stat-value" id="completedExperiences">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>NFTs de Impacto</h3>
+                <div class="stat-value" id="impactNFTs">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Comunidades Apoyadas</h3>
+                <div class="stat-value" id="communitiesSupported">3</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- NFT Section -->
+<section class="section" id="nfts">
+    <div class="container">
+        <h2 class="section-title">🎨 NFTs de Impacto Ecológico</h2>
+
+        <div class="nft-grid">
+            <div class="nft-card">
+                <h3>Guardian del Bosque</h3>
+                <p>NFT exclusivo por participar en programas de reforestación en Morelos</p>
+                <p><strong>Requisito:</strong> 100 SUSC + 1 experiencia de reforestación</p>
+                <button class="btn-nft" data-nft="guardian">Obtener NFT</button>
+            </div>
+            <div class="nft-card">
+                <h3>Protector Cultural</h3>
+                <p>NFT por apoyar la preservación de culturas indígenas en Oaxaca</p>
+                <p><strong>Requisito:</strong> 75 SUSC + 1 experiencia cultural</p>
+                <button class="btn-nft" data-nft="protector">Obtener NFT</button>
+            </div>
+            <div class="nft-card">
+                <h3>Defensor Marino</h3>
+                <p>NFT por contribuir a la conservación de ecosistemas costeros</p>
+                <p><strong>Requisito:</strong> 120 SUSC + 1 experiencia costera</p>
+                <button class="btn-nft" data-nft="defensor">Obtener NFT</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer id="about">
+    <div class="container">
+        <div class="footer-content">
+            <div class="logo">
+                <span class="logo-icon">🌿</span>
+                <span>SustenCoins</span>
+            </div>
+
+            <p>Promoviendo el turismo sostenible a través de la tecnología blockchain</p>
+
+            <div class="footer-links">
+                <a href="#">Términos de Servicio</a>
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Contacto</a>
+                <a href="#">Documentación</a>
+            </div>
+
+            <p>&copy; 2023 SustenCoins. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Modal for Experience Details -->
+<div class="modal" id="experienceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Detalles de Experiencia</h2>
+            <button class="close-modal" id="closeModal">&times;</button>
+        </div>
+        <div id="modalBody">
+            <!-- Contenido dinámico -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Datos de ejemplo para las experiencias
+    const sustainableExperiences = [
+        {
+            id: "morelos-eco-tour",
+            name: "Tour Ecológico Morelos",
+            location: "Morelos",
+            impactLevel: 3,
+            description: "Tour por reservas naturales con actividades de reforestación y educación ambiental.",
+            image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
+            price: "50 SUSC",
+            tokensEarned: 50,
+            duration: "1 día",
+            community: "Comunidad Tepoztlán"
+        },
+        {
+            id: "oaxaca-cultural",
+            name: "Experiencia Cultural Oaxaca",
+            location: "Oaxaca",
+            impactLevel: 2,
+            description: "Inmersión en comunidades indígenas, apoyo a artesanos locales y talleres tradicionales.",
+            image: "https://images.unsplash.com/photo-1517186911136-1d4e2e5f3c36?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
+            price: "25 SUSC",
+            tokensEarned: 25,
+            duration: "2 días",
+            community: "Comunidades Zapotecas"
+        },
+        {
+            id: "chiapas-eco-lodge",
+            name: "Eco-Lodge Chiapas",
+            location: "Chiapas",
+            impactLevel: 3,
+            description: "Hospedaje sostenible en la selva lacandona con proyectos de conservación y avistamiento de fauna.",
+            image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
+            price: "75 SUSC",
+            tokensEarned: 75,
+            duration: "3 días",
+            community: "Comunidad Lacandona"
+        },
+        {
+            id: "queretaro-agro",
+            name: "Turismo Agroecológico Querétaro",
+            location: "Querétaro",
+            impactLevel: 2,
+            description: "Participación en prácticas agrícolas sostenibles y degustación de productos orgánicos locales.",
+            image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
+            price: "30 SUSC",
+            tokensEarned: 30,
+            duration: "1 día",
+            community: "Cooperativa Agroecológica"
+        },
+        {
+            id: "yucatan-ceanotes",
+            name: "Conservación de Cenotes Yucatán",
+            location: "Yucatán",
+            impactLevel: 3,
+            description: "Exploración responsable de cenotes con actividades de limpieza y conservación del ecosistema.",
+            image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
+            price: "60 SUSC",
+            tokensEarned: 60,
+            duration: "2 días",
+            community: "Guardianes de los Cenotes"
+        },
+        {
+            id: "baja-whale",
+            name: "Avistamiento Responsable de Ballenas Baja California",
+            location: "Baja California",
+            impactLevel: 2,
+            description: "Observación de ballenas con operadores certificados y apoyo a programas de investigación marina.",
+            image: "https://images.unsplash.com/photo-1550820327-45b73b2d79c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
+            price: "45 SUSC",
+            tokensEarned: 45,
+            duration: "1 día",
+            community: "Cooperativa Pesquera Sustentable"
+        }
+    ];
+
+    // Estado de la aplicación
+    let userState = {
+        connected: false,
+        account: null,
+        balance: 0,
+        experiences: 0,
+        nfts: 0
+    };
+
+    // Elementos DOM
+    const connectWalletBtn = document.getElementById('connectWallet');
+    const walletInfo = document.getElementById('walletInfo');
+    const experiencesGrid = document.getElementById('experiencesGrid');
+    const totalSUSC = document.getElementById('totalSUSC');
+    const completedExperiences = document.getElementById('completedExperiences');
+    const impactNFTs = document.getElementById('impactNFTs');
+    const exploreBtn = document.getElementById('exploreBtn');
+    const experienceModal = document.getElementById('experienceModal');
+    const closeModal = document.getElementById('closeModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    // Inicializar la aplicación
+    document.addEventListener('DOMContentLoaded', function() {
+        loadExperiences();
+        setupEventListeners();
+        checkWalletConnection();
+    });
+
+    // Cargar experiencias en la cuadrícula
+    function loadExperiences() {
+        experiencesGrid.innerHTML = '';
+
+        sustainableExperiences.forEach(exp => {
+            const experienceCard = document.createElement('div');
+            experienceCard.className = 'experience-card';
+            experienceCard.innerHTML = `
+                    <div class="card-image" style="background-image: url('${exp.image}')"></div>
+                    <div class="card-content">
+                        <h3>${exp.name}</h3>
+                        <p>${exp.description}</p>
+                        <div class="card-details">
+                            <span>📍 ${exp.location}</span>
+                            <span class="impact-badge">Impacto: ${exp.impactLevel}/3</span>
+                        </div>
+                        <div class="card-details">
+                            <span>⏱️ ${exp.duration}</span>
+                            <span>💰 ${exp.price}</span>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" data-id="${exp.id}">Participar</button>
+                            <button class="btn btn-secondary" data-id="${exp.id}-details">Detalles</button>
+                        </div>
+                    </div>
+                `;
+            experiencesGrid.appendChild(experienceCard);
+        });
+
+        // Añadir event listeners a los botones
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const expId = this.getAttribute('data-id');
+                participateInExperience(expId);
+            });
+        });
+
+        document.querySelectorAll('.btn-secondary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const expId = this.getAttribute('data-id').replace('-details', '');
+                showExperienceDetails(expId);
+            });
+        });
+
+        // Añadir event listeners a los botones NFT
+        document.querySelectorAll('.btn-nft').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const nftType = this.getAttribute('data-nft');
+                mintNFT(nftType);
+            });
+        });
+    }
+
+    // Configurar event listeners
+    function setupEventListeners() {
+        connectWalletBtn.addEventListener('click', connectWallet);
+        closeModal.addEventListener('click', () => {
+            experienceModal.style.display = 'none';
+        });
+
+        exploreBtn.addEventListener('click', () => {
+            document.getElementById('experiences').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', (e) => {
+            if (e.target === experienceModal) {
+                experienceModal.style.display = 'none';
+            }
+        });
+    }
+
+    // Conectar wallet (simulación)
+    function connectWallet() {
+        if (userState.connected) {
+            // Simular desconexión
+            userState.connected = false;
+            userState.account = null;
+            walletInfo.textContent = 'No conectado';
+            connectWalletBtn.textContent = 'Conectar Wallet';
+            updateUI();
+        } else {
+            // Simular conexión
+            userState.connected = true;
+            userState.account = '0x742...d35E1';
+            walletInfo.textContent = `Conectado: ${userState.account}`;
+            connectWalletBtn.textContent = 'Desconectar';
+
+            // Simular datos del usuario
+            userState.balance = 125;
+            userState.experiences = 2;
+            userState.nfts = 1;
+
+            updateUI();
+
+            // Mostrar mensaje de éxito
+            alert('Wallet conectada exitosamente!');
+        }
+    }
+
+    // Verificar si hay una wallet conectada (simulación)
+    function checkWalletConnection() {
+        // En una implementación real, aquí verificaríamos Web3
+        // Por ahora, simulamos que no hay conexión inicial
+        userState.connected = false;
+        updateUI();
+    }
+
+    // Participar en una experiencia (simulación)
+    function participateInExperience(expId) {
+        if (!userState.connected) {
+            alert('Por favor, conecta tu wallet primero para participar en experiencias.');
+            return;
+        }
+
+        const experience = sustainableExperiences.find(exp => exp.id === expId);
+        if (experience) {
+            // Simular transacción blockchain
+            userState.balance += experience.tokensEarned;
+            userState.experiences += 1;
+
+            updateUI();
+
+            // Mostrar confirmación
+            alert(`¡Felicidades! Has ganado ${experience.tokensEarned} SUSC por participar en "${experience.name}".`);
+        }
+    }
+
+    // Mostrar detalles de una experiencia
+    function showExperienceDetails(expId) {
+        const experience = sustainableExperiences.find(exp => exp.id === expId);
+        if (experience) {
+            modalTitle.textContent = experience.name;
+            modalBody.innerHTML = `
+                    <div style="margin-bottom: 1.5rem;">
+                        <img src="${experience.image}" alt="${experience.name}" style="width: 100%; border-radius: 8px; margin-bottom: 1rem;">
+                        <p>${experience.description}</p>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Ubicación:</strong> ${experience.location}</label>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Duración:</strong> ${experience.duration}</label>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Comunidad beneficiada:</strong> ${experience.community}</label>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Nivel de impacto:</strong> ${experience.impactLevel}/3</label>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Recompensa:</strong> ${experience.tokensEarned} SUSC</label>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Precio de reserva:</strong> ${experience.price}</label>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" data-id="${experience.id}">Participar en esta experiencia</button>
+                `;
+
+            // Añadir event listener al botón dentro del modal
+            modalBody.querySelector('.btn-primary').addEventListener('click', function() {
+                participateInExperience(expId);
+                experienceModal.style.display = 'none';
+            });
+
+            experienceModal.style.display = 'flex';
+        }
+    }
+
+    // Acuñar NFT (simulación)
+    function mintNFT(nftType) {
+        if (!userState.connected) {
+            alert('Por favor, conecta tu wallet primero para obtener NFTs.');
+            return;
+        }
+
+        // Verificar si el usuario tiene suficientes SUSC
+        let requiredSUSC = 0;
+        let nftName = '';
+
+        switch(nftType) {
+            case 'guardian':
+                requiredSUSC = 100;
+                nftName = 'Guardian del Bosque';
+                break;
+            case 'protector':
+                requiredSUSC = 75;
+                nftName = 'Protector Cultural';
+                break;
+            case 'defensor':
+                requiredSUSC = 120;
+                nftName = 'Defensor Marino';
+                break;
+        }
+
+        if (userState.balance >= requiredSUSC) {
+            // Simular transacción
+            userState.balance -= requiredSUSC;
+            userState.nfts += 1;
+
+            updateUI();
+
+            alert(`¡Felicidades! Has obtenido el NFT "${nftName}".`);
+        } else {
+            alert(`No tienes suficientes SUSC. Necesitas ${requiredSUSC} SUSC para obtener este NFT.`);
+        }
+    }
+
+    // Actualizar la UI con el estado actual
+    function updateUI() {
+        totalSUSC.textContent = userState.balance;
+        completedExperiences.textContent = userState.experiences;
+        impactNFTs.textContent = userState.nfts;
+    }
+</script>
+</body>
+</html>
